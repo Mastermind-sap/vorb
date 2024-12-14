@@ -1,33 +1,42 @@
 // Learn more at developers.reddit.com/docs
-import { Devvit } from '@devvit/public-api';
+import { Devvit, useState } from '@devvit/public-api';
 import { HomePage } from './HomePage';
 import { PlayPage } from './PlayPage';
 import { LeaderBoardPage } from './LeaderBoardPage';
 import { HowToPlayPage } from './HowToPlayPage';
+import { GameOverPage } from './GameOverPage';
 
 export enum PageType {
   HOMEPAGE,
   PLAYPAGE,
   LEADERBOARDPAGE,
   HOWTOPLAYPAGE,
+  GAMEOVERPAGE,
 }
 
 export interface Props {
-  // Define your props here
-  navigate: (page: PageType) => void;
-  setCount: (count: number) => void;
-  count: number;
-  // Add any other props you need
+  navigate: (page: PageType, params?: any) => void;
+  score: number;
+  setScore: (score: number) => void;
+  context: Devvit.Context;
 }
 
-const App: Devvit.CustomPostComponent = ({ useState }: Devvit.Context) => {
-  const [page, navigate] = useState(PageType.HOMEPAGE);
-  const [count, setCount] = useState(0);
+const App: Devvit.CustomPostComponent = (context) => {
+  const [page, setPage] = useState(PageType.HOMEPAGE);
+  const [score, setScore] = useState(0);
+
+  const navigate = (page: PageType, params?: any) => {
+    if (params?.score !== undefined) {
+      setScore(params.score);
+    }
+    setPage(page);
+  };
 
   const props = {
     navigate,
-    setCount,
-    count,
+    score,
+    setScore,
+    context
   };
 
   switch (page) {
@@ -37,6 +46,8 @@ const App: Devvit.CustomPostComponent = ({ useState }: Devvit.Context) => {
       return <LeaderBoardPage {...props} />;
     case PageType.HOWTOPLAYPAGE:
       return <HowToPlayPage {...props} />;
+    case PageType.GAMEOVERPAGE:
+      return <GameOverPage {...props} />;
     default:
       return <HomePage {...props} />;
   }
@@ -73,7 +84,8 @@ Devvit.addMenuItem({
 
 Devvit.addCustomPostType({
   name: 'Word Ladder App',
-  height:"tall",
+  description: 'A word ladder game',
+  height: "tall",
   render: App,
 });
 

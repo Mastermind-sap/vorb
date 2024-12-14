@@ -1,7 +1,7 @@
 import { Devvit } from '@devvit/public-api';
 import { PageType,Props } from './main';
 
-export const HomePage: Devvit.BlockComponent<Props> = ({ navigate }) => {
+export const HomePage: Devvit.BlockComponent<Props> = ({ navigate,setScore }) => {
   return (
     <vstack height="100%" width="100%" gap="medium" alignment="center middle" backgroundColor='black'>
       <image
@@ -15,7 +15,11 @@ export const HomePage: Devvit.BlockComponent<Props> = ({ navigate }) => {
       />
       <spacer size="medium" />
       {/* <text size="large">{`Click counter: ${counter}`}</text> */}
-      <button appearance="primary" width="200px" onPress={() => navigate(PageType.PLAYPAGE)}>
+      <button appearance="primary" width="200px" onPress={() => {
+        setScore(0);
+        navigate(PageType.PLAYPAGE);
+        }}
+      >
         Play
       </button>
       <button appearance="secondary" width="200px" onPress={() => navigate(PageType.LEADERBOARDPAGE)}>
