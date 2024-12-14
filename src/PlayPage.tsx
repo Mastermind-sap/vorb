@@ -6,6 +6,7 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
   const [currentWord, setCurrentWord] = useState('start');
   const [lives, setLives] = useState(3);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [correctWords, setCorrectWords] = useState(['start']);
   
 
   // Timer logic using useInterval
@@ -41,11 +42,13 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
     if (isValidWord(submittedWord, currentWord)) {
       setScore(score + 1);
       setCurrentWord(submittedWord);
+      setCorrectWords([...correctWords, submittedWord]);
       console.log("New current word:", submittedWord);
     } else {
       console.log("Penalize");
       setLives(lives - 1);
       console.log("Lives:", lives - 1);
+      context.ui.showToast({ text: "Incorrect word! Try again.", appearance: "neutral" });
     }
   };
 
@@ -77,13 +80,61 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
   );
 
   return (
-    <vstack padding="medium" gap="medium" alignment="center" width="100%">
-      <AppBar title="Play" navigate={navigate} />
-      <text>Score: {score}</text>
-      <text>Lives: {lives}</text>
-      <text>Time Left: {timeLeft}s</text>
-      <text>Current Word: {currentWord}</text>
-      <button onPress={() => context.ui.showForm(inputForm)}>Enter word</button>
+    <vstack padding="medium" gap="medium" alignment="center top" width="100%" height="100%">
+      <AppBar title="Word Ladder Game" navigate={navigate} />
+      
+      <vstack gap="medium" alignment="center middle" grow>
+        <vstack gap="medium" alignment="center middle" cornerRadius="medium" backgroundColor="neutral-background-strong" padding="medium" width="100%">
+          <text size="xlarge" weight="bold" color="neutral-content-strong">Current Word: {currentWord}</text>
+          
+          <hstack gap="medium" alignment="center middle">
+            <vstack alignment="center middle">
+              <hstack gap="small" alignment="center middle">
+                <icon name="karma" color="primary-plain" />
+                <text size="medium" weight="bold" color="neutral-content">Score</text>
+              </hstack>
+              <text size="large" color="primary-plain">{score}</text>
+            </vstack>
+            
+            <vstack alignment="center middle">
+              <hstack gap="small" alignment="center middle">
+                <icon name="heart" color={lives > 1 ? "primary-plain" : "danger-plain"} />
+                <text size="medium" weight="bold" color="neutral-content">Lives</text>
+              </hstack>
+              <text size="large" color={lives > 1 ? "primary-plain" : "danger-plain"}>{lives}</text>
+            </vstack>
+            
+            <vstack alignment="center middle">
+              <hstack gap="small" alignment="center middle">
+                <icon name="loop" color={timeLeft > 10 ? "primary-plain" : "danger-plain"} />
+                <text size="medium" weight="bold" color="neutral-content">Time Left</text>
+              </hstack>
+              <text size="large" color={timeLeft > 10 ? "primary-plain" : "danger-plain"}>{timeLeft}s</text>
+            </vstack>
+          </hstack>
+        </vstack>
+        
+        <button 
+          appearance="primary"
+          size="large"
+          icon="chat"
+          onPress={() => context.ui.showForm(inputForm)}
+        >
+          Enter Word
+        </button>
+        
+        <text size="small" color="neutral-content-weak">
+          Change one letter to form a new word
+        </text>
+        <vstack gap="small" width="100%">
+          <text size="medium" weight="bold" color="neutral-content" alignment="center">Correct Words:</text>
+          <hstack gap="small" alignment="center middle" width="100%">
+            {correctWords.slice(-5).map((word, index) => (
+              <text key={index.toString()} color="primary-plain">{word}</text>
+            ))}
+          </hstack>
+        </vstack>
+      </vstack>
     </vstack>
   );
 };

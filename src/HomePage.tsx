@@ -1,9 +1,16 @@
 import { Devvit } from '@devvit/public-api';
-import { PageType,Props } from './main';
+import { PageType, Props } from './main';
 
-export const HomePage: Devvit.BlockComponent<Props> = ({ navigate,setScore }) => {
+export const HomePage: Devvit.BlockComponent<Props> = ({ navigate, setScore }) => {
   return (
-    <vstack height="100%" width="100%" gap="medium" alignment="center middle" backgroundColor='black'>
+    <vstack 
+      height="100%" 
+      width="100%" 
+      gap="large" 
+      alignment="center middle" 
+      backgroundColor="neutral-background"
+      padding="large"
+    >
       <image
         url="icon.png"
         description="logo"
@@ -14,20 +21,32 @@ export const HomePage: Devvit.BlockComponent<Props> = ({ navigate,setScore }) =>
         resizeMode="fit"
       />
       <spacer size="medium" />
-      {/* <text size="large">{`Click counter: ${counter}`}</text> */}
-      <button appearance="primary" width="200px" onPress={() => {
-        setScore(0);
-        navigate(PageType.PLAYPAGE);
-        }}
-      >
-        Play
-      </button>
-      <button appearance="secondary" width="200px" onPress={() => navigate(PageType.LEADERBOARDPAGE)}>
-        LeaderBoard
-      </button>
-      <button appearance="bordered" width="200px" onPress={() => navigate(PageType.HOWTOPLAYPAGE)}>
-        How to Play?
-      </button>
+      <vstack gap="medium" width="100%" maxWidth="300px">
+        <button 
+          appearance="primary" 
+          size="large"
+          onPress={() => {
+            setScore(0);
+            navigate(PageType.PLAYPAGE);
+          }}
+        >
+          Play
+        </button>
+        <button 
+          appearance="secondary" 
+          size="large"
+          onPress={() => navigate(PageType.LEADERBOARDPAGE)}
+        >
+          LeaderBoard
+        </button>
+        <button 
+          appearance="bordered" 
+          size="large"
+          onPress={() => navigate(PageType.HOWTOPLAYPAGE)}
+        >
+          How to Play?
+        </button>
+      </vstack>
     </vstack>
   );
 };

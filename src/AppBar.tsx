@@ -8,10 +8,28 @@ interface AppBarProps {
 
 export const AppBar: Devvit.BlockComponent<AppBarProps> = ({ title, navigate }) => {
   return (
-    <hstack width="100%" alignment="center middle" padding="small" borderColor='primary-border' cornerRadius='medium' border='thick'>
-      <button appearance="bordered" icon='back' onPress={() => navigate(PageType.HOMEPAGE)} />
+    <hstack 
+      width="100%" 
+      alignment="center middle" 
+      padding="medium" 
+      backgroundColor="neutral-background-strong"
+      borderColor="primary-border"
+      cornerRadius="medium" 
+      border="thin"
+    >
+      <button 
+        appearance="secondary" 
+        icon="back" 
+        onPress={() => navigate(PageType.HOMEPAGE)}
+        size="small"
+      />
       <spacer grow />
-      <text size="xxlarge" weight="bold" color="white">
+      <text 
+        size="xlarge" 
+        weight="bold" 
+        color="neutral-content-strong"
+        alignment="center"
+      >
         {title}
       </text>
       <spacer grow />
