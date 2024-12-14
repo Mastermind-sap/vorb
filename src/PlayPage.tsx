@@ -79,7 +79,7 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
     },
     (values) => {
       if (values.word) {
-        handleWordSubmission(values.word);
+        handleWordSubmission(values.word.toLowerCase());
       }
     }
   );
