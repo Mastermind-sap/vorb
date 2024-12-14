@@ -27,11 +27,17 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
     console.log(input, base);
     console.log(input.length, base.length);
     console.log(input.length !== base.length);
-    if (input.length !== base.length) return false;
+    if (input.length !== base.length) {
+      context.ui.showToast({ text: "Word not of same size!", appearance: "neutral" });
+      return false;
+    }
     let diffCount = 0;
     for (let i = 0; i < base.length; i++) {
       if (input[i] !== base[i]) diffCount++;
-      if (diffCount > 1) return false;
+      if (diffCount > 1) {
+        context.ui.showToast({ text: "Words can differ by only one letter!", appearance: "neutral" });
+        return false;
+      }
     }
     console.log(diffCount);
     return diffCount === 1;
@@ -48,7 +54,6 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
       console.log("Penalize");
       setLives(lives - 1);
       console.log("Lives:", lives - 1);
-      context.ui.showToast({ text: "Incorrect word! Try again.", appearance: "neutral" });
     }
   };
 
