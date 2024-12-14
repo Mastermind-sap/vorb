@@ -3,10 +3,9 @@ import { AppBar } from './AppBar';
 import { PageType, Props } from './main';
 
 export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScore,context }) => {
-  const [currentWord, setCurrentWord] = useState('start'); // Initial word
-  const [userInput, setUserInput] = useState('');
+  const [currentWord, setCurrentWord] = useState('start');
   const [lives, setLives] = useState(3);
-  const [timeLeft, setTimeLeft] = useState(60); // 60-second timer
+  const [timeLeft, setTimeLeft] = useState(60);
   
 
   // Timer logic using useInterval
@@ -37,25 +36,27 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
     return diffCount === 1;
   };
 
-  const handleSubmit = () => {
-    if (isValidWord(userInput, currentWord)) {
+  const handleWordSubmission = (submittedWord: string) => {
+    console.log("Submitted word:", submittedWord);
+    if (isValidWord(submittedWord, currentWord)) {
       setScore(score + 1);
-      setCurrentWord(userInput); // Update to the new valid word
-      setUserInput(''); // Reset input
+      setCurrentWord(submittedWord);
+      console.log("New current word:", submittedWord);
     } else {
-      setLives(lives - 1); // Penalize invalid input
-      setUserInput(''); // Reset input
+      console.log("Penalize");
+      setLives(lives - 1);
+      console.log("Lives:", lives - 1);
     }
   };
 
   const handleGameOver = () => {
-    navigate(PageType.GAMEOVERPAGE); // Navigate to a Game Over page
+    navigate(PageType.GAMEOVERPAGE);
   };
 
   // Handle game over scenario
   if (lives <= 0 || timeLeft <= 0) {
+    console.log("Game Over");
     handleGameOver();
-    return null;
   }
 
   const inputForm = useForm(
@@ -69,12 +70,8 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate, score,setScor
       ],
     },
     (values) => {
-      console.log(values);
       if (values.word) {
-        console.log(values.word);
-        setUserInput(values.word);
-        console.log(userInput);
-        handleSubmit();
+        handleWordSubmission(values.word);
       }
     }
   );
