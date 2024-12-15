@@ -2,6 +2,9 @@
 import { Devvit, useState } from '@devvit/public-api';
 import { HomePage } from './HomePage';
 import { PlayPage } from './PlayPage';
+import { WordLadderPage } from './WordLadderPage';
+import { WordlePage } from './WordlePage';
+import { WordRailPage } from './WordRailPage';
 import { LeaderBoardPage } from './LeaderBoardPage';
 import { HowToPlayPage } from './HowToPlayPage';
 import { GameOverPage } from './GameOverPage';
@@ -10,6 +13,9 @@ import { Loader } from './Loader';
 export enum PageType {
   HOMEPAGE,
   PLAYPAGE,
+  WORDLADDERPAGE,
+  WORDLEPAGE,
+  WORDRAILPAGE,
   LEADERBOARDPAGE,
   HOWTOPLAYPAGE,
   GAMEOVERPAGE,
@@ -43,6 +49,12 @@ const App: Devvit.CustomPostComponent = (context) => {
   switch (page) {
     case PageType.PLAYPAGE:
       return <PlayPage {...props} />;
+    case PageType.WORDLADDERPAGE:
+      return <WordLadderPage {...props} />;
+    case PageType.WORDLEPAGE:
+      return <WordlePage {...props} />;
+    case PageType.WORDRAILPAGE:
+      return <WordRailPage {...props} />;
     case PageType.LEADERBOARDPAGE:
       return <LeaderBoardPage {...props} />;
     case PageType.HOWTOPLAYPAGE:
