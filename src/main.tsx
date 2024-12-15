@@ -56,6 +56,7 @@ const App: Devvit.CustomPostComponent = (context) => {
 Devvit.configure({
   redis: true,
   redditAPI: true,
+  http:true,
 });
 
 // Add a menu item to the subreddit menu for instantiating the new experience post
