@@ -1,6 +1,7 @@
 import { Devvit, useAsync } from '@devvit/public-api';
 import { PageType, Props } from './main';
 import { AppBar } from './AppBar';
+import { Loader } from './Loader';
 
 export const LeaderBoardPage: Devvit.BlockComponent<Props> = ({ navigate, context }) => {
   const subredditId = context.subredditId;
@@ -34,7 +35,7 @@ export const LeaderBoardPage: Devvit.BlockComponent<Props> = ({ navigate, contex
     };
   }, { depends: [] });  // Remove context.postId from depends array
 
-  if (loading) return <text>Loading...</text>;
+  if (loading) return <Loader />;
   if (error) return <text>Error: {error.message}</text>;
   if (!leaderboard || leaderboard.topPlayers.length === 0) return <text>No leaderboard data available yet. Please check back in a moment.</text>;
 

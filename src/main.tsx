@@ -5,6 +5,7 @@ import { PlayPage } from './PlayPage';
 import { LeaderBoardPage } from './LeaderBoardPage';
 import { HowToPlayPage } from './HowToPlayPage';
 import { GameOverPage } from './GameOverPage';
+import { Loader } from './Loader';
 
 export enum PageType {
   HOMEPAGE,
@@ -73,11 +74,7 @@ Devvit.addMenuItem({
       title: 'Word Ladder',
       subredditName: subreddit.name,
       // The preview appears while the post loads
-      preview: (
-        <vstack height="100%" width="100%" alignment="middle center">
-          <text size="large">Loading ...</text>
-        </vstack>
-      ),
+      preview: <Loader />,
     });
     ui.navigateTo(post);
   },
