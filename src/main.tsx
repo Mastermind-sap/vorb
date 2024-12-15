@@ -62,7 +62,7 @@ Devvit.configure({
 
 // Add a menu item to the subreddit menu for instantiating the new experience post
 Devvit.addMenuItem({
-  label: 'Play Word Ladder',
+  label: 'Play Vorb',
   location: 'subreddit',
   forUserType: 'moderator',
   onPress: async (_event, context) => {
@@ -71,7 +71,7 @@ Devvit.addMenuItem({
 
     const subreddit = await reddit.getCurrentSubreddit();
     const post = await reddit.submitPost({
-      title: 'Word Ladder',
+      title: 'Vorb',
       subredditName: subreddit.name,
       // The preview appears while the post loads
       preview: <Loader />,
@@ -81,8 +81,8 @@ Devvit.addMenuItem({
 });
 
 Devvit.addCustomPostType({
-  name: 'Word Ladder App',
-  description: 'A word ladder game',
+  name: 'Vorb App',
+  description: 'A word game',
   height: "tall",
   render: App,
 });

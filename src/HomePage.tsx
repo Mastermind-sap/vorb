@@ -12,12 +12,12 @@ export const HomePage: Devvit.BlockComponent<Props> = ({ navigate, setScore }) =
       padding="large"
     >
       <image
-        url="icon.png"
+        url="logo.gif"
         description="logo"
         imageHeight={512}
         imageWidth={512}
-        height="50%"
-        width="50%"
+        height="60%"
+        width="60%"
         resizeMode="fit"
       />
       <spacer size="medium" />
