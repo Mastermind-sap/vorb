@@ -67,7 +67,8 @@ export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, se
   return (
     <vstack padding="medium" gap="medium" alignment="center top" width="100%" height="100%">
       <AppBar title="Word Rail Game" navigate={navigate} />
-        <vstack gap="medium" alignment="center middle" cornerRadius="medium" backgroundColor="neutral-background-strong" padding="medium" width="100%" height="100%">
+      <vstack gap="medium" alignment="center middle" grow>
+        <vstack gap="medium" alignment="center middle" cornerRadius="medium" backgroundColor="neutral-background-strong" padding="medium" width="100%">
           <text size="xlarge" weight="bold" color="neutral-content-strong">Current Word: {currentWord}</text>
           
           <hstack gap="medium" alignment="center middle">
@@ -109,6 +110,7 @@ export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, se
         <text size="small" color="neutral-content-weak">
           The first letter of the new word must match the last letter of the previous word
         </text>
+      </vstack>
     </vstack>
   );
 };
