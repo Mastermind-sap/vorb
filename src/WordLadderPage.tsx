@@ -1,12 +1,14 @@
-import { Devvit, useState, useForm, useInterval } from '@devvit/public-api';
+import { Devvit, useState, useForm, useInterval, useAsync } from '@devvit/public-api';
 import { AppBar } from './AppBar';
 import { PageType, Props } from './main';
+import isValidEnglishWord from './validateWord';
 
-export const WordLadderPage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context }) => {
-  const [currentWord, setCurrentWord] = useState('start');
+export const WordLadderPage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context,finalWord="start" }) => {
+  const [currentWord, setCurrentWord] = useState(finalWord);
   const [lives, setLives] = useState(3);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [correctWords, setCorrectWords] = useState(['start']);
+  const [inputWord, setInputWord] = useState('');
+  const [correctWords, setCorrectWords] = useState([finalWord]);
   
   // Timer logic using useInterval
   const timer = useInterval(() => {
@@ -22,38 +24,27 @@ export const WordLadderPage: Devvit.BlockComponent<Props> = ({ navigate, score, 
 
   timer.start();
 
-  const isValidWord = (input: string, base: string): boolean => {
-    console.log(input, base);
-    console.log(input.length, base.length);
-    console.log(input.length !== base.length);
-    if (input.length !== base.length) {
-      context.ui.showToast({ text: "Word not of same size!", appearance: "neutral" });
-      return false;
-    }
-    let diffCount = 0;
-    for (let i = 0; i < base.length; i++) {
-      if (input[i] !== base[i]) diffCount++;
-      if (diffCount > 1) {
-        context.ui.showToast({ text: "Words can differ by only one letter!", appearance: "neutral" });
-        return false;
+  const { data: isValid, loading, error } = useAsync(async () => {
+    if (inputWord) {
+      if (inputWord.length !== currentWord.length) 
+        return 'invalid_length';
+      let diffCount = 0;
+      for (let i = 0; i < currentWord.length; i++) {
+        if (inputWord[i] !== currentWord[i]) diffCount++;
+        if (diffCount > 1) {
+          return 'invalid_diff';
+        }
       }
+      if (diffCount !== 1) {
+        return 'invalid_diff';
+      }
+      return await isValidEnglishWord(inputWord, context);
     }
-    console.log(diffCount);
-    return diffCount === 1;
-  };
+    return false;
+  }, { depends: { inputWord, currentWord }});
 
   const handleWordSubmission = (submittedWord: string) => {
-    console.log("Submitted word:", submittedWord);
-    if (isValidWord(submittedWord, currentWord)) {
-      setScore(score + 1);
-      setCurrentWord(submittedWord);
-      setCorrectWords([...correctWords, submittedWord]);
-      console.log("New current word:", submittedWord);
-    } else {
-      console.log("Penalize");
-      setLives(lives - 1);
-      console.log("Lives:", lives - 1);
-    }
+    setInputWord(submittedWord.toLowerCase());
   };
 
   const handleGameOver = () => {
@@ -62,10 +53,10 @@ export const WordLadderPage: Devvit.BlockComponent<Props> = ({ navigate, score, 
 
   // Handle game over scenario
   if (lives <= 0 || timeLeft <= 0) {
-    console.log("Game Over");
     handleGameOver();
   }
 
+  // Use useForm for input handling
   const inputForm = useForm(
     {
       fields: [
@@ -78,10 +69,31 @@ export const WordLadderPage: Devvit.BlockComponent<Props> = ({ navigate, score, 
     },
     (values) => {
       if (values.word) {
-        handleWordSubmission(values.word.toLowerCase());
+        handleWordSubmission(values.word);
       }
     }
   );
+
+  // Effect to handle word validation result
+  if (!loading && inputWord) {
+    if (error) {
+      context.ui.showToast({ text: "Error validating word!", appearance: "neutral" });
+    } else if (isValid === 'invalid_length') {
+      context.ui.showToast({ text: "Word not of same size!", appearance: "neutral" });
+      // setLives(lives - 1);
+    } else if (isValid === 'invalid_diff') {
+      context.ui.showToast({ text: "Words can differ by only one letter!", appearance: "neutral" });
+      setLives(lives - 1);
+    } else if (isValid === false) {
+      context.ui.showToast({ text: "The word is not a valid English word!", appearance: "neutral" });
+      setLives(lives - 1);
+    } else if (isValid === true) {
+      setScore(score + 1);
+      setCurrentWord(inputWord);
+      setCorrectWords([...correctWords, inputWord]);
+    }
+    setInputWord(''); // Reset input word after processing
+  }
 
   return (
     <vstack padding="medium" gap="medium" alignment="center top" width="100%" height="100%">
