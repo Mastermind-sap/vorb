@@ -49,7 +49,7 @@
 <h2 id="about-the-project"> :pencil: About The Project</h2>
 
 <p align="justify">
-The Word Ladder Game is a collection of word-based puzzle games built using the Devvit public API. The project includes three different game modes: Wordle, Word Rail, and Word Ladder. Each game mode offers a unique challenge and tests the player's vocabulary and word-forming skills.
+Vorb is a collection of word-based puzzle games built using Reddit's Developer platform Devvit. The project includes three different game modes: Wordle, Word Rail, and Word Ladder. Each game mode offers a unique challenge and tests the player's vocabulary and word-forming skills.
 </p>
 
 ![Section break](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
