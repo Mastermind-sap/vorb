@@ -10,35 +10,43 @@ export const LeaderBoardMenuPage: Devvit.BlockComponent<Props> = ({ navigate }) 
   return (
     <vstack 
       height="100%" 
-      width="100%" 
-      gap="large" 
-      alignment="center middle" 
+      width="100%"
+      padding='medium'
+      gap='medium' 
       backgroundColor="neutral-background"
-      padding="large"
     >
       <AppBar title="Select Leaderboard" navigate={navigate} />
-      <vstack gap="medium" width="100%" maxWidth="300px">
-        <button 
-          appearance="primary" 
-          size="large"
-          onPress={() => handleNavigateToLeaderboard('wordLadder')}
-        >
-          Word Ladder
-        </button>
-        <button 
-          appearance="secondary" 
-          size="large"
-          onPress={() => handleNavigateToLeaderboard('wordle')}
-        >
-          Wordle
-        </button>
-        <button 
-          appearance="bordered" 
-          size="large"
-          onPress={() => handleNavigateToLeaderboard('wordRail')}
-        >
-          Word Rail
-        </button>
+      <vstack 
+        grow 
+        alignment="center middle" 
+        padding="medium"
+      >
+        <vstack gap="medium" width="100%" maxWidth="300px">
+          <button 
+            appearance="primary" 
+            size="large"
+            grow
+            onPress={() => handleNavigateToLeaderboard('wordle')}
+          >
+            Wordle
+          </button>
+          <button 
+            appearance="secondary" 
+            size="large"
+            grow
+            onPress={() => handleNavigateToLeaderboard('wordRail')}
+          >
+            Word Rail
+          </button>
+          <button 
+            appearance="bordered" 
+            size="large"
+            grow
+            onPress={() => handleNavigateToLeaderboard('wordLadder')}
+          >
+            Word Ladder
+          </button>
+        </vstack>
       </vstack>
     </vstack>
   );
