@@ -4,7 +4,7 @@ import { PageType, Props } from './main';
 
 export const WordlePage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context, finalWord ="default"}) => {
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [lives, setLives] = useState(10);
+  const [lives, setLives] = useState(7);
 
   const handleWordSubmission = (submittedWord: string) => {
     if (submittedWord.length !== finalWord.length) {
@@ -21,12 +21,12 @@ export const WordlePage: Devvit.BlockComponent<Props> = ({ navigate, score, setS
 
     if (submittedWord === finalWord) {
       context.ui.showToast({ text: "Congratulations! You've guessed the word!", appearance: "success" });
-      navigate(PageType.GAMEOVERPAGE, { score: newScore, finalWord,gameType: 'wordle' });
+      navigate(PageType.GAMEOVERPAGE, { score: newScore, finalWord, gameType: 'wordle' });
     } else {
       setLives(lives - 1);
       if (lives - 1 <= 0) {
         context.ui.showToast({ text: "Game Over! You've run out of guesses.", appearance: "neutral" });
-        navigate(PageType.GAMEOVERPAGE, { score, finalWord,gameType: 'wordle'});
+        navigate(PageType.GAMEOVERPAGE, { score: newScore, finalWord, gameType: 'wordle'});
       }
     }
   };
@@ -38,7 +38,7 @@ export const WordlePage: Devvit.BlockComponent<Props> = ({ navigate, score, setS
         correctCount++;
       }
     }
-    return (correctCount / finalWord.length) * 100;
+    return parseFloat(((correctCount / finalWord.length) * 100).toFixed(2));
   };
 
   const inputForm = useForm(
