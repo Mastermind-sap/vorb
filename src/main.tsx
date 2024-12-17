@@ -11,6 +11,7 @@ import { GameOverPage } from './GameOverPage';
 import { Loader } from './Loader';
 import { words } from './dictionary';
 import { LeaderBoardMenuPage } from './LeaderBoardMenuPage';
+import { HowToPlayMenuPage } from './HowToPlayMenuPage';
 
 export enum PageType {
   HOMEPAGE,
@@ -22,6 +23,7 @@ export enum PageType {
   HOWTOPLAYPAGE,
   GAMEOVERPAGE,
   LEADERBOARDMENUPAGE,
+  HOWTOPLAYMENUPAGE,
 }
 
 export interface Props {
@@ -82,6 +84,8 @@ const App: Devvit.CustomPostComponent = (context) => {
       return <GameOverPage {...props} />;
     case PageType.LEADERBOARDMENUPAGE:
       return <LeaderBoardMenuPage {...props} />;
+    case PageType.HOWTOPLAYMENUPAGE:
+      return <HowToPlayMenuPage {...props} />;
     default:
       return <HomePage {...props} />;
   }
