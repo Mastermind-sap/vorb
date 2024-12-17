@@ -10,6 +10,7 @@ import { HowToPlayPage } from './HowToPlayPage';
 import { GameOverPage } from './GameOverPage';
 import { Loader } from './Loader';
 import { words } from './dictionary';
+import { LeaderBoardMenuPage } from './LeaderBoardMenuPage';
 
 export enum PageType {
   HOMEPAGE,
@@ -20,6 +21,7 @@ export enum PageType {
   LEADERBOARDPAGE,
   HOWTOPLAYPAGE,
   GAMEOVERPAGE,
+  LEADERBOARDMENUPAGE,
 }
 
 export interface Props {
@@ -28,12 +30,14 @@ export interface Props {
   setScore: (score: number) => void;
   context: Devvit.Context;
   finalWord?: string;
+  gameType?: string;
 }
 
 const App: Devvit.CustomPostComponent = (context) => {
   const [page, setPage] = useState(PageType.HOMEPAGE);
   const [score, setScore] = useState(0);
   const [finalWord, setFinalWord] = useState<string>('');
+  const [gameType, setGameType] = useState<string>('');
 
   const navigate = (page: PageType, params?: any) => {
     if (params?.score !== undefined) {
@@ -41,8 +45,13 @@ const App: Devvit.CustomPostComponent = (context) => {
     }
     if (params?.finalWord !== undefined) {
       setFinalWord(params.finalWord);
-    }else{
+    } else {
       setFinalWord('');
+    }
+    if (params?.gameType !== undefined) {
+      setGameType(params.gameType);
+    } else {
+      setGameType('');
     }
     setPage(page);
   };
@@ -52,7 +61,8 @@ const App: Devvit.CustomPostComponent = (context) => {
     score,
     setScore,
     context,
-    finalWord
+    finalWord,
+    gameType,
   };
 
   switch (page) {
@@ -70,6 +80,8 @@ const App: Devvit.CustomPostComponent = (context) => {
       return <HowToPlayPage {...props} />;
     case PageType.GAMEOVERPAGE:
       return <GameOverPage {...props} />;
+    case PageType.LEADERBOARDMENUPAGE:
+      return <LeaderBoardMenuPage {...props} />;
     default:
       return <HomePage {...props} />;
   }
@@ -108,38 +120,94 @@ Devvit.addCustomPostType({
   render: App,
 });
 
-// Menu item to show all Redis data
+const showLeaderboardData = async (context: Devvit.Context, gameType: string) => {
+  const { redis, ui, subredditId, reddit } = context;
+  const leaderboardKey = `leaderboard:${gameType}:${subredditId}`;
+  
+  try {
+    const totalEntries = await redis.zCard(leaderboardKey);
+    const leaderboardData = await redis.zRange(leaderboardKey, 0, totalEntries - 1, { by: 'rank' });
+    // console.log(totalEntries);
+    // console.log(leaderboardData);
+    if (leaderboardData && leaderboardData.length > 0) {
+      let leaderboardString = `${gameType.charAt(0).toUpperCase() + gameType.slice(1)} Leaderboard:\n`;
+      for (const { member, score } of leaderboardData) {
+        const user = await reddit.getUserById(member);
+        const username = user?.username ?? 'Anonymous';
+        leaderboardString += `${username}: ${score}\n`;
+      }
+      ui.showToast(`${gameType.charAt(0).toUpperCase() + gameType.slice(1)} leaderboard data logged to console.`);
+      console.log(leaderboardString);
+    } else {
+      ui.showToast(`No ${gameType} leaderboard data found.`);
+    }
+  } catch (error) {
+    console.error(`Error fetching ${gameType} leaderboard data:`, error);
+    ui.showToast(`Failed to fetch ${gameType} leaderboard data. Check console for details.`);
+  }
+};
+
+const resetLeaderboardData = async (context: Devvit.Context, gameType: string) => {
+  const { redis, ui, subredditId } = context;
+  const leaderboardKey = `leaderboard:${gameType}:${subredditId}`;
+  
+  try {
+    const totalEntries = await redis.zCard(leaderboardKey);
+    
+    if (totalEntries > 0) {
+      // Remove all entries from the leaderboard
+      await redis.zRemRangeByRank(leaderboardKey, 0, -1);
+      ui.showToast(`Reset ${totalEntries} entries from the ${gameType} leaderboard.`);
+      console.log(`Reset ${totalEntries} entries from the ${gameType} leaderboard.`);
+    } else {
+      ui.showToast(`No ${gameType} leaderboard data found to reset.`);
+    }
+  } catch (error) {
+    console.error(`Error removing ${gameType} leaderboard data:`, error);
+    ui.showToast(`Failed to reset ${gameType} leaderboard data. Check console for details.`);
+  }
+};
+
+// Menu item to show all Leaderboard data
 Devvit.addMenuItem({
   label: 'Show Leaderboard Data',
   location: 'subreddit',
   forUserType: 'moderator',
   onPress: async (_, context) => {
-    const { redis, ui, subredditId, reddit } = context;
-    
-    try {
-      const leaderboardKey = `leaderboard:${subredditId}`;
-      const totalEntries = await redis.zCard(leaderboardKey);
-      const leaderboardData = await redis.zRange(leaderboardKey, 0, totalEntries-1, { by: 'rank'});
-      console.log(totalEntries);
-      console.log(leaderboardData);
-      if (leaderboardData && leaderboardData.length > 0) {
-        let leaderboardString = 'Leaderboard:\n';
-        for (const { member, score } of leaderboardData) {
-          const user = await reddit.getUserById(member);
-          const username = user?.username ?? 'Anonymous';
-          leaderboardString += `${username}: ${score}\n`;
-        }
-        ui.showToast('Leaderboard data logged to console.');
-        console.log(leaderboardString);
-      } else {
-        ui.showToast('No leaderboard data found.');
-      }
-    } catch (error) {
-      console.error('Error fetching leaderboard data:', error);
-      ui.showToast('Failed to fetch leaderboard data. Check console for details.');
-    }
+    await showLeaderboardData(context, 'wordLadder');
+    await showLeaderboardData(context, 'wordle');
+    await showLeaderboardData(context, 'wordRail');
   },
 });
+
+
+// Devvit.addMenuItem({
+//   label: 'Show Word Ladder Leaderboard Data',
+//   location: 'subreddit',
+//   forUserType: 'moderator',
+//   onPress: async (_, context) => {
+//     await showLeaderboardData(context, 'wordLadder');
+//   },
+// });
+
+// Devvit.addMenuItem({
+//   label: 'Show Wordle Leaderboard Data',
+//   location: 'subreddit',
+//   forUserType: 'moderator',
+//   onPress: async (_, context) => {
+//     await showLeaderboardData(context, 'wordle');
+//   },
+// });
+
+// Devvit.addMenuItem({
+//   label: 'Show Word Rail Leaderboard Data',
+//   location: 'subreddit',
+//   forUserType: 'moderator',
+//   onPress: async (_, context) => {
+//     await showLeaderboardData(context, 'wordRail');
+//   },
+// });
+
 
 // Menu item to remove leaderboard data
 Devvit.addMenuItem({
@@ -147,27 +215,11 @@ Devvit.addMenuItem({
   location: 'subreddit',
   forUserType: 'moderator',
   onPress: async (_, context) => {
-    const { redis, ui, subredditId } = context;
-    
-    try {
-      const leaderboardKey = `leaderboard:${subredditId}`;
-      const totalEntries = await redis.zCard(leaderboardKey);
-      
-      if (totalEntries > 0) {
-        // Remove all entries from the leaderboard
-        await redis.zRemRangeByRank(leaderboardKey, 0, -1);
-        ui.showToast(`Reseted ${totalEntries} entries from the leaderboard.`);
-        console.log(`Reseted ${totalEntries} entries from the leaderboard.`);
-      } else {
-        ui.showToast('No leaderboard data found to reset.');
-      }
-    } catch (error) {
-      console.error('Error removing leaderboard data:', error);
-      ui.showToast('Failed to reset leaderboard data. Check console for details.');
-    }
+    await resetLeaderboardData(context, 'wordLadder');
+    await resetLeaderboardData(context, 'wordle');
+    await resetLeaderboardData(context, 'wordRail');
   },
 });
-
 
 const DICTIONARY_HASH = 'word_dictionary';
 

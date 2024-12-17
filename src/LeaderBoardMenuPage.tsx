@@ -1,7 +1,12 @@
 import { Devvit } from '@devvit/public-api';
 import { PageType, Props } from './main';
+import { AppBar } from './AppBar';
 
-export const HomePage: Devvit.BlockComponent<Props> = ({ navigate, setScore }) => {
+export const LeaderBoardMenuPage: Devvit.BlockComponent<Props> = ({ navigate }) => {
+  const handleNavigateToLeaderboard = (gameType: string) => {
+    navigate(PageType.LEADERBOARDPAGE, { gameType });
+  };
+
   return (
     <vstack 
       height="100%" 
@@ -11,40 +16,28 @@ export const HomePage: Devvit.BlockComponent<Props> = ({ navigate, setScore }) =
       backgroundColor="neutral-background"
       padding="large"
     >
-      <image
-        url="logo.gif"
-        description="logo"
-        imageHeight={512}
-        imageWidth={512}
-        height="60%"
-        width="60%"
-        resizeMode="fit"
-      />
-      <spacer size="medium" />
+      <AppBar title="Select Leaderboard" navigate={navigate} />
       <vstack gap="medium" width="100%" maxWidth="300px">
         <button 
           appearance="primary" 
           size="large"
-          onPress={() => {
-            setScore(0);
-            navigate(PageType.PLAYPAGE);
-          }}
+          onPress={() => handleNavigateToLeaderboard('wordLadder')}
         >
-          Play
+          Word Ladder
         </button>
         <button 
           appearance="secondary" 
           size="large"
-          onPress={() => navigate(PageType.LEADERBOARDMENUPAGE)}
+          onPress={() => handleNavigateToLeaderboard('wordle')}
         >
-          LeaderBoard
+          Wordle
         </button>
         <button 
           appearance="bordered" 
           size="large"
-          onPress={() => navigate(PageType.HOWTOPLAYPAGE)}
+          onPress={() => handleNavigateToLeaderboard('wordRail')}
         >
-          How to Play?
+          Word Rail
         </button>
       </vstack>
     </vstack>

@@ -37,7 +37,7 @@ export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, se
   };
 
   const handleGameOver = () => {
-    navigate(PageType.GAMEOVERPAGE);
+    navigate(PageType.GAMEOVERPAGE,{gameType: 'wordRail'});
   };
 
   // Handle game over scenario

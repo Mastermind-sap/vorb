@@ -48,7 +48,7 @@ export const WordLadderPage: Devvit.BlockComponent<Props> = ({ navigate, score, 
   };
 
   const handleGameOver = () => {
-    navigate(PageType.GAMEOVERPAGE);
+    navigate(PageType.GAMEOVERPAGE, {gameType: 'wordLadder'});
   };
 
   // Handle game over scenario

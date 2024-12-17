@@ -3,12 +3,12 @@ import { PageType, Props } from './main';
 import { AppBar } from './AppBar';
 import { Loader } from './Loader';
 
-export const GameOverPage: Devvit.BlockComponent<Props> = ({navigate, score, setScore, context, finalWord}) => {
+export const GameOverPage: Devvit.BlockComponent<Props> = ({navigate, score, setScore, context, finalWord, gameType}) => {
   const { data: username, loading, error } = useAsync(async () => {
     try {
       console.log(`Updating....`);
       const subredditId = context.subredditId;
-      const leaderboardKey = `leaderboard:${subredditId}`;
+      const leaderboardKey = `leaderboard:${gameType}:${subredditId}`;
       const userId = context.userId as string;
       console.log(`User ID: ${userId}`);
 
@@ -48,7 +48,7 @@ export const GameOverPage: Devvit.BlockComponent<Props> = ({navigate, score, set
       console.error('Unexpected error:', error);
       throw error;
     }
-  }, { depends: [context.subredditId ?? '', context.userId ?? '', score] });
+  }, { depends: [context.subredditId ?? '', context.userId ?? '', score, gameType??''] });
 
   if (loading) return <Loader />;
   if (error) return (
@@ -62,12 +62,12 @@ export const GameOverPage: Devvit.BlockComponent<Props> = ({navigate, score, set
     <vstack padding="medium" gap="medium" alignment="center" width="100%">
       <AppBar title="Game Over" navigate={navigate} />
       <text>{username}'s Score: {score}</text>
-      {finalWord!=""&&finalWord ? <text>The word was: {finalWord}</text> : null}
+      {finalWord && finalWord !== "" ? <text>The word was: {finalWord}</text> : null}
       <button onPress={() => {
         setScore(0);
         navigate(PageType.PLAYPAGE);
       }}>Play Again</button>
-      <button onPress={() => navigate(PageType.LEADERBOARDPAGE)}>View Leaderboard</button>
+      <button onPress={() => navigate(PageType.LEADERBOARDPAGE, { gameType })}>View Leaderboard</button>
     </vstack>
   );
 };
