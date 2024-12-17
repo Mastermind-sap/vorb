@@ -69,8 +69,8 @@ export const LeaderBoardPage: Devvit.BlockComponent<Props> = ({ navigate, contex
       <text color="neutral-content" size="large">No one has yet played the game.</text>
     </vstack>
   );
-  leaderboard.topPlayers.forEach(player => console.log(player.member??"anot" ));
-  console.log("MEI:" + currentPlayer);
+  // leaderboard.topPlayers.forEach(player => console.log(player.member??"anot" ));
+  // console.log("MEI:" + currentPlayer);
   return (
     <vstack padding="medium" gap="medium" alignment="center middle" width="100%">
       <AppBar title={getTitle()} navigate={navigate} />
@@ -78,7 +78,7 @@ export const LeaderBoardPage: Devvit.BlockComponent<Props> = ({ navigate, contex
       {/* Top Players */}
       <vstack gap="small" width="100%" maxWidth="400px">
         {leaderboard.topPlayers.map((player, index) => {
-          console.log(`player.member: "${player.member}", currentPlayer: "${currentPlayer}"`);
+          // console.log(`player.member: "${player.member}", currentPlayer: "${currentPlayer}"`);
            const isCurrentPlayer = (player.member === currentPlayer) || 
            (player.member === 'anonymous' && currentPlayer === 'anonymous');
           return (
