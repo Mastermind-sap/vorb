@@ -1,11 +1,13 @@
-import { Devvit, useState, useForm, useInterval } from '@devvit/public-api';
+import { Devvit, useState, useForm, useInterval, useAsync } from '@devvit/public-api';
 import { AppBar } from './AppBar';
 import { PageType, Props } from './main';
+import isValidEnglishWord from './validateWord';
 
 export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context, finalWord="start" }) => {
   const [currentWord, setCurrentWord] = useState(finalWord);
   const [lives, setLives] = useState(3);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [inputWord, setInputWord] = useState('');
 
   // Timer logic using useInterval
   const timer = useInterval(() => {
@@ -21,21 +23,17 @@ export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, se
 
   timer.start();
 
-  const isValidWord = (input: string, base: string): boolean => {
-    if (input[0] !== base[base.length - 1]) {
-      context.ui.showToast({ text: "The first letter must match the last letter of the previous word!", appearance: "neutral" });
-      return false;
+  const { data: isValid, loading, error } = useAsync(async () => {
+    if (inputWord) {
+      if (inputWord[0] !== currentWord[currentWord.length - 1]) 
+        return 'invalid_first_letter';
+      return await isValidEnglishWord(inputWord, context);
     }
-    return true;
-  };
+    return false;
+  }, { depends: { inputWord, currentWord }});
 
   const handleWordSubmission = (submittedWord: string) => {
-    if (isValidWord(submittedWord, currentWord)) {
-      setScore(score + 1);
-      setCurrentWord(submittedWord);
-    } else {
-      setLives(lives - 1);
-    }
+    setInputWord(submittedWord.toLowerCase());
   };
 
   const handleGameOver = () => {
@@ -47,6 +45,7 @@ export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, se
     handleGameOver();
   }
 
+  // Use useForm for input handling
   const inputForm = useForm(
     {
       fields: [
@@ -59,10 +58,29 @@ export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, se
     },
     (values) => {
       if (values.word) {
-        handleWordSubmission(values.word.toLowerCase());
+        handleWordSubmission(values.word);
       }
     }
   );
+
+  // Effect to handle word validation result
+  if (!loading && inputWord) {
+    if (error) {
+      context.ui.showToast({ text: "Error validating word!", appearance: "neutral" });
+    } else if(isValid=== 'invalid_first_letter'){
+      context.ui.showToast({ text: "The first letter must match the last letter of the previous word!", appearance: "neutral" });
+      setLives(lives - 1);
+    }
+      else if (isValid === false) {
+      context.ui.showToast({ text: "The word is not a valid English word!", appearance: "neutral" });
+      setLives(lives - 1);
+    } else if (isValid === true) {
+      setScore(score + 1);
+      setCurrentWord(inputWord);
+    }
+    setInputWord(''); // Reset input word after processing
+  }
+
 
   return (
     <vstack padding="medium" gap="medium" alignment="center top" width="100%" height="100%">
