@@ -9,7 +9,7 @@ export const GameOverPage: Devvit.BlockComponent<Props> = ({navigate, score, set
       console.log(`Updating....`);
       const subredditId = context.subredditId;
       const leaderboardKey = `leaderboard:${gameType}:${subredditId}`;
-      const userId = context.userId as string;
+      const userId = context.userId??"anonymous";
       console.log(`User ID: ${userId}`);
 
       // Get username
