@@ -99,4 +99,64 @@ Devvit.addCustomPostType({
   render: App,
 });
 
+// Menu item to show all Redis data
+Devvit.addMenuItem({
+  label: 'Show Leaderboard Data',
+  location: 'subreddit',
+  forUserType: 'moderator',
+  onPress: async (_, context) => {
+    const { redis, ui, subredditId, reddit } = context;
+    
+    try {
+      const leaderboardKey = `leaderboard:${subredditId}`;
+      const totalEntries = await redis.zCard(leaderboardKey);
+      const leaderboardData = await redis.zRange(leaderboardKey, 0, totalEntries-1, { by: 'rank'});
+      console.log(totalEntries);
+      console.log(leaderboardData);
+      if (leaderboardData && leaderboardData.length > 0) {
+        let leaderboardString = 'Leaderboard:\n';
+        for (const { member, score } of leaderboardData) {
+          const user = await reddit.getUserById(member);
+          const username = user?.username ?? 'Anonymous';
+          leaderboardString += `${username}: ${score}\n`;
+        }
+        ui.showToast('Leaderboard data logged to console.');
+        console.log(leaderboardString);
+      } else {
+        ui.showToast('No leaderboard data found.');
+      }
+    } catch (error) {
+      console.error('Error fetching leaderboard data:', error);
+      ui.showToast('Failed to fetch leaderboard data. Check console for details.');
+    }
+  },
+});
+
+// Menu item to remove leaderboard data
+Devvit.addMenuItem({
+  label: 'Reset Leaderboard Data',
+  location: 'subreddit',
+  forUserType: 'moderator',
+  onPress: async (_, context) => {
+    const { redis, ui, subredditId } = context;
+    
+    try {
+      const leaderboardKey = `leaderboard:${subredditId}`;
+      const totalEntries = await redis.zCard(leaderboardKey);
+      
+      if (totalEntries > 0) {
+        // Remove all entries from the leaderboard
+        await redis.zRemRangeByRank(leaderboardKey, 0, -1);
+        ui.showToast(`Reseted ${totalEntries} entries from the leaderboard.`);
+        console.log(`Reseted ${totalEntries} entries from the leaderboard.`);
+      } else {
+        ui.showToast('No leaderboard data found to reset.');
+      }
+    } catch (error) {
+      console.error('Error removing leaderboard data:', error);
+      ui.showToast('Failed to reset leaderboard data. Check console for details.');
+    }
+  },
+});
+
 export default Devvit;

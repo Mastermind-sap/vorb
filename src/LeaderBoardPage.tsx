@@ -10,7 +10,7 @@ export const LeaderBoardPage: Devvit.BlockComponent<Props> = ({ navigate, contex
   const { data: leaderboard, loading, error } = useAsync(async () => {
     const topPlayers = await context.redis.zRange(leaderboardKey, 0, 2, { 
       reverse: true, 
-      by: 'score'
+      by: 'rank'
     });
 
     const currentPlayer = context.userId ?? "anonymous";
@@ -36,8 +36,20 @@ export const LeaderBoardPage: Devvit.BlockComponent<Props> = ({ navigate, contex
   }, { depends: [] });  // Remove context.postId from depends array
 
   if (loading) return <Loader />;
-  if (error) return <text>Error: {error.message}</text>;
-  if (!leaderboard || leaderboard.topPlayers.length === 0) return <text>No leaderboard data available yet. Please check back in a moment.</text>;
+  if (error) return (
+    <vstack padding="medium" gap="medium" alignment="center middle" width="100%">
+      <AppBar title="LeaderBoard" navigate={navigate} />
+      <text>Error: {error.message}</text>
+    </vstack>
+  );
+  console.log('Leaderboard:', leaderboard);
+  console.log('Top players:', (leaderboard?.topPlayers)??"NULL");
+  if (!leaderboard || leaderboard.topPlayers.length === 0) return (
+    <vstack padding="medium" gap="medium" alignment="center middle" width="100%">
+      <AppBar title="LeaderBoard" navigate={navigate} />
+      <text>No leaderboard data available yet. Please check back in a moment.</text>
+    </vstack>
+  );
 
   return (
     <vstack padding="medium" gap="medium" alignment="center" width="100%">
