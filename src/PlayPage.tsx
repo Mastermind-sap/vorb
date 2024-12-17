@@ -1,8 +1,11 @@
 import { Devvit } from '@devvit/public-api';
 import { AppBar } from './AppBar';
 import { PageType, Props } from './main';
+import { words } from './dictionary';
 
 export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate }) => {
+  const getRandomWord = () => words[Math.floor(Math.random() * words.length)];
+
   return (
     <vstack 
       height="100%" 
@@ -17,21 +20,21 @@ export const PlayPage: Devvit.BlockComponent<Props> = ({ navigate }) => {
         <button 
           appearance="primary" 
           size="large"
-          onPress={() => navigate(PageType.WORDLADDERPAGE)}
+          onPress={() => navigate(PageType.WORDLADDERPAGE, { finalWord: getRandomWord() })}
         >
           Word Ladder
         </button>
         <button 
           appearance="secondary" 
           size="large"
-          onPress={() => navigate(PageType.WORDLEPAGE)}
+          onPress={() => navigate(PageType.WORDLEPAGE, { finalWord: getRandomWord() })}
         >
           Wordle
         </button>
         <button 
           appearance="bordered" 
           size="large"
-          onPress={() => navigate(PageType.WORDRAILPAGE)}
+          onPress={() => navigate(PageType.WORDRAILPAGE, { finalWord: getRandomWord() })}
         >
           Word Rail
         </button>

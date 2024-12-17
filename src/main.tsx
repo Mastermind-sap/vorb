@@ -26,15 +26,22 @@ export interface Props {
   score: number;
   setScore: (score: number) => void;
   context: Devvit.Context;
+  finalWord?: string;
 }
 
 const App: Devvit.CustomPostComponent = (context) => {
   const [page, setPage] = useState(PageType.HOMEPAGE);
   const [score, setScore] = useState(0);
+  const [finalWord, setFinalWord] = useState<string>('');
 
   const navigate = (page: PageType, params?: any) => {
     if (params?.score !== undefined) {
       setScore(params.score);
+    }
+    if (params?.finalWord !== undefined) {
+      setFinalWord(params.finalWord);
+    }else{
+      setFinalWord('');
     }
     setPage(page);
   };
@@ -43,7 +50,8 @@ const App: Devvit.CustomPostComponent = (context) => {
     navigate,
     score,
     setScore,
-    context
+    context,
+    finalWord
   };
 
   switch (page) {

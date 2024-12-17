@@ -2,8 +2,8 @@ import { Devvit, useState, useForm, useInterval } from '@devvit/public-api';
 import { AppBar } from './AppBar';
 import { PageType, Props } from './main';
 
-export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context }) => {
-  const [currentWord, setCurrentWord] = useState('start');
+export const WordRailPage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context, finalWord="start" }) => {
+  const [currentWord, setCurrentWord] = useState(finalWord);
   const [lives, setLives] = useState(3);
   const [timeLeft, setTimeLeft] = useState(60);
 

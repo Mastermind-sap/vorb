@@ -2,8 +2,7 @@ import { Devvit, useState, useForm } from '@devvit/public-api';
 import { AppBar } from './AppBar';
 import { PageType, Props } from './main';
 
-export const WordlePage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context }) => {
-  const finalWord = "react";
+export const WordlePage: Devvit.BlockComponent<Props> = ({ navigate, score, setScore, context, finalWord ="default"}) => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [lives, setLives] = useState(10);
 
@@ -22,12 +21,12 @@ export const WordlePage: Devvit.BlockComponent<Props> = ({ navigate, score, setS
 
     if (submittedWord === finalWord) {
       context.ui.showToast({ text: "Congratulations! You've guessed the word!", appearance: "success" });
-      navigate(PageType.GAMEOVERPAGE, { score: newScore });
+      navigate(PageType.GAMEOVERPAGE, { score: newScore, finalWord });
     } else {
       setLives(lives - 1);
       if (lives - 1 <= 0) {
         context.ui.showToast({ text: "Game Over! You've run out of guesses.", appearance: "neutral" });
-        navigate(PageType.GAMEOVERPAGE, { score });
+        navigate(PageType.GAMEOVERPAGE, { score, finalWord});
       }
     }
   };
